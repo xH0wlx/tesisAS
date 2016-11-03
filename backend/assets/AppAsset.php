@@ -20,6 +20,7 @@ class AppAsset extends AssetBundle
         'plugins/jvectormap/jquery-jvectormap-1.2.2.css',
         'dist/css/AdminLTE.min.css',
         'dist/css/skins/_all-skins.min.css',
+
     ];
     public $js = [
         //'plugins/jQuery/jquery-2.2.3.min.js',
@@ -38,6 +39,7 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+        'backend\assets\AssetPropios',
     ];
 }
 

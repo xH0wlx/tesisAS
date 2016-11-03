@@ -6,6 +6,7 @@
  * Time: 13:43
  */
 use yii\helpers\Html;
+use yii\helpers\Url;
 ?>
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
@@ -53,7 +54,7 @@ use yii\helpers\Html;
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             <li class="header">NAVEGACION PRINCIPAL</li>
-            <li class="active treeview">
+            <li class="treeview">
                 <a href="#">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
             <span class="pull-right-container">
@@ -65,28 +66,14 @@ use yii\helpers\Html;
                     <li class="active"><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                 </ul>
             </li>
-            <li class="treeview">
+
+            <li class="active treeview">
                 <a href="#">
-                    <i class="fa fa-files-o"></i>
-                    <span>Layout Options</span>
-            <span class="pull-right-container">
-              <span class="label label-primary pull-right">4</span>
-            </span>
+                    <i class="fa fa-th"></i> <span>Nueva implementación&nbsp;</span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="pages/layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
-                    <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-                    <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-                    <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
+                    <li><a href="<?= Html::encode(Url::toRoute('/implementacion/index', true))?>"><i class="fa fa-circle-o"></i> Nueva Asignatura</a></li>
                 </ul>
-            </li>
-            <li>
-                <a href="pages/widgets.html">
-                    <i class="fa fa-th"></i> <span>Widgets</span>
-            <span class="pull-right-container">
-              <small class="label pull-right bg-green">new</small>
-            </span>
-                </a>
             </li>
             <li class="treeview">
                 <a href="#">
@@ -166,15 +153,15 @@ use yii\helpers\Html;
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-folder"></i> <span>Examples</span>
+                    <i class="fa fa-folder"></i> <span>Mantenedores</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="pages/examples/invoice.html"><i class="fa fa-circle-o"></i> Invoice</a></li>
-                    <li><a href="pages/examples/profile.html"><i class="fa fa-circle-o"></i> Profile</a></li>
-                    <li><a href="pages/examples/login.html"><i class="fa fa-circle-o"></i> Login</a></li>
+                    <li><a href="<?= Html::encode(Url::toRoute('/sede/index', true))?>"><i class="fa fa-circle-o"></i> Sede</a></li>
+                    <li><a href="<?= Html::encode(Url::toRoute('/carrera/index', true))?>"><i class="fa fa-circle-o"></i> Carrera</a></li>
+                    <li><a href="<?= Html::encode(Url::toRoute('/asignatura/index', true))?>"><i class="fa fa-circle-o"></i> Asignatura</a></li>
                     <li><a href="pages/examples/register.html"><i class="fa fa-circle-o"></i> Register</a></li>
                     <li><a href="pages/examples/lockscreen.html"><i class="fa fa-circle-o"></i> Lockscreen</a></li>
                     <li><a href="pages/examples/404.html"><i class="fa fa-circle-o"></i> 404 Error</a></li>
