@@ -33,7 +33,7 @@ $this->registerJsFile('@web/js/implementacion/funciones.js', ['depends' => [\yii
     <div class="box-body" style="display: none;">
         <?php $form = \yii\bootstrap\ActiveForm::begin([
             'id' => 'form-cantidad-grupos',
-            'action' => '/alumno-inscrito-has-grupo-trabajo/cambiar-cantidad-grupos',
+            'action' => Url::to(['/alumno-inscrito-has-grupo-trabajo/cambiar-cantidad-grupos']),
             //'layout' => 'horizontal',
             //'enableAjaxValidation' => true,
             //'validationUrl' => 'validation-rul',
