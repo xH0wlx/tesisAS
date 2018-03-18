@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\CarreraSearch */
+/* @var $model backend\models\search\CarreraSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -19,11 +19,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cod_carrera') ?>
 
-    <?= $form->field($model, 'plan') ?>
+    <?= $form->field($model, 'nombre_carrera') ?>
 
-    <?= $form->field($model, 'nombre') ?>
+    <?= $form->field($model, 'plan_carrera') ?>
 
-    <?= $form->field($model, 'id_sede') ?>
+    <?= $form->field($model, 'facultad_id_facultad') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

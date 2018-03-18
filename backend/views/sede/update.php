@@ -3,16 +3,14 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Sede */
+/* @var $model backend\models\sede */
 
-$this->title = 'Update Sede: ' . $model->id_sede;
+$this->title = 'Modificar Sede: ' . $model->nombre_sede;
 $this->params['breadcrumbs'][] = ['label' => 'Sedes', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_sede, 'url' => ['view', 'id' => $model->id_sede]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => $model->nombre_sede, 'url' => ['view', 'id' => $model->id_sede]];
+$this->params['breadcrumbs'][] = 'Modificar';
 ?>
 <div class="sede-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

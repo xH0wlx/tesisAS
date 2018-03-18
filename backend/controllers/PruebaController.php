@@ -28,22 +28,8 @@ class PruebaController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        //ESTO PARA EL USUARIO NO REGISTRADO PARA TODOS
-                        'actions' => ['login'],
                         'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        //ESTO ES PARA EL USUARIO REGISTRADO
-                        'actions' => ['logout', 'usuario', 'error'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        //ESTO ES PRUEBA
-                        'actions' => ['logout','index', 'usuario', 'login'],
-                        'allow' => true,
-                        'roles' => ['test'],
+                        'roles' => ['coordinador general'],
                     ],
                 ],
             ],

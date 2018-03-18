@@ -1,10 +1,10 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Carrera */
+/* @var $model backend\models\carrera */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -12,18 +12,30 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'cod_carrera')->textInput() ?>
+    <?= $form->field($model, 'cod_carrera')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'plan')->textInput() ?>
+    <?= $form->field($model, 'nombre_carrera')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'plan_carrera')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'id_sede')->textInput() ?>
+    <?= $form->field($model, 'alias_carrera')->textInput(['maxlength' => true]) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+    <?= $form->field($model, 'facultad_id_facultad')->widget(Select2::classname(), [
+        'data' => $model->facultadLista,
+        'language' => 'es',
+        'theme' => 'default',
+        'options' => ['placeholder' => 'Seleccione Facultad ...'],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ]);?>
+  
+	<?php if (!Yii::$app->request->isAjax){ ?>
+	  	<div class="form-group">
+	        <?= Html::submitButton($model->isNewRecord ? 'Crear' : 'Modificar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	    </div>
+	<?php }?>
 
     <?php ActiveForm::end(); ?>
-
+    
 </div>

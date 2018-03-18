@@ -18,5 +18,6 @@ class AppAssetLogin extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
+        'backend\assets\AssetPropios',
     ];
 }

@@ -109,3 +109,70 @@ a.desc:after {
 .nav > li > form > button:hover {
     text-decoration: none;
 }
+
+form div.required label.control-label:after {
+    content:" * ";
+    color:red;
+}
+
+/*
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,*/
+.kv-grid-table > tbody > tr > td,
+.kv-grid-table> tfoot > tr > td {
+    border: 1px solid #c8c8c8 !important;
+}
+
+.kv-grid-table > thead > tr > th,
+.kv-grid-table > thead > tr > td{
+    border: 1px solid #dedede !important;
+}
+
+.kv-grid-table > thead > tr:first-child {
+    border-top: 2px solid #bdbdbd !important;
+}
+
+.kv-grid-table > thead > tr:last-child {
+    border-bottom: 2px solid #bdbdbd !important;
+}
+
+.tabla-panel > tbody > tr > th,
+.tabla-panel > tbody > tr > td{
+    border: 1px solid #546E7A !important;
+}
+.tabla-panel > tbody > tr > th{
+    background-color: rgba(78, 78, 78, 0.58);
+    color: white;
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+img.bg {
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+    img.bg {
+        left: 50%;
+        margin-left: -512px;   /* 50% */
+    }
+}
+
+table.detail-view th {
+    width: 35%;
+}
+
+table.detail-view td {
+    width: 65%;
+}

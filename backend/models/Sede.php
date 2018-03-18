@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
 
@@ -8,9 +8,9 @@ use Yii;
  * This is the model class for table "sede".
  *
  * @property integer $id_sede
- * @property string $nombre
+ * @property string $nombre_sede
  *
- * @property Carrera[] $carreras
+ * @property Facultad[] $facultads
  */
 class Sede extends \yii\db\ActiveRecord
 {
@@ -28,7 +28,8 @@ class Sede extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre'], 'string', 'max' => 45],
+            [['nombre_sede'], 'required'],
+            [['nombre_sede'], 'string', 'max' => 255],
         ];
     }
 
@@ -38,16 +39,16 @@ class Sede extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_sede' => 'Id Sede',
-            'nombre' => 'Nombre',
+            'id_sede' => 'Id',
+            'nombre_sede' => 'Sede',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCarreras()
+    public function getFacultads()
     {
-        return $this->hasMany(Carrera::className(), ['id_sede' => 'id_sede']);
+        return $this->hasMany(Facultad::className(), ['sede_id_sede' => 'id_sede']);
     }
 }

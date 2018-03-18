@@ -1,12 +1,15 @@
 <?php
 namespace common\models;
 
+use backend\models\TipoUsuario;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
-
+use yii\base\Security;
 /**
  * User model
  *
@@ -16,52 +19,80 @@ use yii\web\IdentityInterface;
  * @property string $password_reset_token
  * @property string $email
  * @property string $auth_key
- * @property integer $status
+ * @property integer $rol_id
+ * @property integer $estado_id
+ * @property integer $tipo_usuario_id
+ * @property string $verification_code
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
+    const ESTADO_ACTIVO = 1;
 
-
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
-        return '{{%user}}';
+        return 'user';
     }
 
     /**
-     * @inheritdoc
+     * behaviors
      */
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 
     /**
-     * @inheritdoc
+     * reglas de validación
      */
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['estado_id', 'default', 'value' => self::ESTADO_ACTIVO],
+            //['rol_id', 'default', 'value' => 1],
+            ['email', 'filter', 'filter' => 'trim'],
+            //['email', 'unique'],
+
+            ['username', \sateler\rut\RutValidator::className()],
+        ];
+    }
+
+    /* Las etiquetas de los atributos de su modelo */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'RUT (Nombre de Usuario)',
+            'auth_key' => 'Auth Key',
+            'password_hash' => 'Contraseña',//
+            'password_reset_token' => 'Password Reset Token',
+            'nombre_completo' => "Nombre Completo",
+            'email' => 'Email',
+            'estado_id' => 'Estado ID',
+            'tipo_usuario_id' => 'Tipo Usuario ID',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'verification_code' => 'Verification Code',
         ];
     }
 
     /**
-     * @inheritdoc
+     * @findIdentity
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id, 'estado_id' => self::ESTADO_ACTIVO]);
     }
 
     /**
@@ -73,20 +104,19 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by username
-     *
-     * @param string $username
+     * Encuentra usuario por username
+     * dividida en dos líneas para evitar ajuste de línea * @param string $username
      * @return static|null
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username, 'estado_id' => self::ESTADO_ACTIVO]);
     }
 
     /**
-     * Finds user by password reset token
+     * Encuentra usuario por clave de restablecimiento de password
      *
-     * @param string $token password reset token
+     * @param string $token clave de restablecimiento de password
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
@@ -94,17 +124,16 @@ class User extends ActiveRecord implements IdentityInterface
         if (!static::isPasswordResetTokenValid($token)) {
             return null;
         }
-
         return static::findOne([
             'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
+            'estado_id' => self::ESTADO_ACTIVO,
         ]);
     }
 
     /**
-     * Finds out if password reset token is valid
+     * Determina si la clave de restablecimiento de password es válida
      *
-     * @param string $token password reset token
+     * @param string $token clave de restablecimiento de password
      * @return boolean
      */
     public static function isPasswordResetTokenValid($token)
@@ -112,14 +141,14 @@ class User extends ActiveRecord implements IdentityInterface
         if (empty($token)) {
             return false;
         }
-
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        $parts = explode('_', $token);
+        $timestamp = (int) end($parts);
         return $timestamp + $expire >= time();
     }
 
     /**
-     * @inheritdoc
+     * @getId
      */
     public function getId()
     {
@@ -127,7 +156,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
+     * @getAuthKey
      */
     public function getAuthKey()
     {
@@ -135,7 +164,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
+     * @validateAuthKey
      */
     public function validateAuthKey($authKey)
     {
@@ -143,10 +172,10 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Validates password
+     * Valida password
      *
-     * @param string $password password to validate
-     * @return boolean if password provided is valid for current user
+     * @param string $password password a validar
+     * @return boolean si la password provista es válida para el usuario actual
      */
     public function validatePassword($password)
     {
@@ -154,17 +183,21 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Generates password hash from password and sets it to the model
+     * Genera hash de password a partir de password y la establece en el modelo
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password, $cost=null)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        if($cost != null){
+            $this->password_hash = Yii::$app->security->generatePasswordHash($password, $cost);
+        }else{
+            $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        }
     }
 
     /**
-     * Generates "remember me" authentication key
+     * Genera clave de autenticación "recuerdame"
      */
     public function generateAuthKey()
     {
@@ -172,7 +205,8 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Generates new password reset token
+     * Genera nueva clave de restablecimiento de password
+     * dividida en dos líneas para evitar ajuste de línea
      */
     public function generatePasswordResetToken()
     {
@@ -180,10 +214,28 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Removes password reset token
+     * Remueve clave de restablecimiento de password
      */
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * Returns user role name according to RBAC
+     * @return string
+     */
+    public function getRoleName()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        if (!$roles) {
+            return null;
+        }
+
+        reset($roles);
+        /* @var $role \yii\rbac\Role */
+        $role = current($roles);
+
+        return $role->name;
     }
 }

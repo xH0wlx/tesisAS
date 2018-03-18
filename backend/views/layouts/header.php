@@ -8,25 +8,71 @@
 use yii\helpers\Html;
 ?>
 <header class="main-header">
-
     <!-- Logo -->
-    <a href=<?=Yii::getAlias('@web')."/site";?> class="logo">
+    <a style="background-image: url('<?=Yii::getAlias('@web').'/images/logoSI-AS.jpg'?>');background-repeat: no-repeat;background-position: center;" href=<?=Yii::getAlias('@web')."/site";?> class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>P</b>AS</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>Programa</b>AS</span>
     </a>
 
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
         <!-- Sidebar toggle button-->
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+       <!-- <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
-        </a>
+        </a>-->
 
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+                <?php if(Yii::$app->user->can("coordinador general")){ ?>
+                    <?php
+                    //Url::to(['/implementacion/panel-implementacion', 'idImplementacion' => Yii::$app->request->get('idImplementacion')])
+                        $modelMax = \backend\models\Match1::find()->orderBy('anio_match1 DESC, semestre_match1 DESC')->one();
+                        $max = 0; //CASO BASE
+                        $maxSemestre = 0;
+                        if($modelMax) {
+                            $anio = $modelMax->anio_match1;
+                            $semestre = $modelMax->semestre_match1;
+
+                            $implementaciones = \backend\models\Implementacion::find()->where([/*"anio_implementacion" => $anio,
+                            "semestre_implementacion" => $semestre,*/ "estado"=>0])->all();
+                            if($implementaciones != null){
+                                ?>
+                                <li class="dropdown notifications-menu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa fa-bell-o"></i>
+                                        <span class="label label-warning"><?=count($implementaciones)?></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="header">Faltan datos en:</li>
+                                        <li>
+                                            <!-- inner menu: contains the actual data -->
+                                            <ul class="menu">
+                                                <?php
+                                                    foreach ($implementaciones as $implementacion){
+                                                ?>
+                                                <li>
+                                                    <a href=<?= \yii\helpers\Url::to(['/implementacion/panel-implementacion',
+                                                        'idImplementacion' => $implementacion->id_implementacion ]) ?> >
+                                                        <i class="fa fa-warning text-yellow"></i>
+                                                        <?= $implementacion->match1ServicioOne->asignaturaCodAsignatura->codigoNombre ?> /
+                                                        <?= $implementacion->match1ServicioOne->asignaturaCodAsignatura->carreraCodCarrera->facultadIdFacultad->sedeIdSede->nombre_sede ?>
+                                                    </a>
+                                                </li>
+
+                                                <?php }//FIN FOR ?>
+                                            </ul>
+                                        </li>
+                                        <!--<li class="footer"><a href="#">.</a></li>-->
+                                    </ul>
+                                </li>
+                                <?php
+                            }
+                        }
+                    ?>
+
+                <?php } ?>
                 <?php if(false){?>
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
@@ -42,7 +88,7 @@ use yii\helpers\Html;
                                 <li><!-- start message -->
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="<?=$baseUrl?>/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                            <img src="<?=$baseUrl?>/adminlte/dist/img/avatar5.png" class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
                                             Support Team
@@ -55,7 +101,7 @@ use yii\helpers\Html;
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="<?=$baseUrl?>/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                                            <img src="<?=$baseUrl?> /adminlte/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
                                             AdminLTE Design Team
@@ -67,7 +113,7 @@ use yii\helpers\Html;
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="<?=$baseUrl?>/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                                            <img src="<?=$baseUrl?>/adminlte/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
                                             Developers
@@ -79,7 +125,7 @@ use yii\helpers\Html;
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="<?=$baseUrl?>/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                                            <img src="<?=$baseUrl?>/adminlte/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
                                             Sales Department
@@ -91,7 +137,7 @@ use yii\helpers\Html;
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="<?=$baseUrl?>/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                                            <img src="<?=$baseUrl?>/adminlte/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
                                             Reviewers
@@ -226,30 +272,32 @@ use yii\helpers\Html;
                 if (Yii::$app->user->isGuest) {
                 ?>
                     <!-- Control Sidebar Toggle Button -->
-                    <li>
+                    <!--<li>
                         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                    </li>
+                    </li>-->
                 <?php
                 } else {
                 ?>
+                    <!--<li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>-->
                     <!-- User Account: style can be found in dropdown.less -->
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="<?=$baseUrl?>/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                            <span class="hidden-xs"><?= Html::encode(Yii::$app->user->identity->username)?></span>
+                            <!--<img src="//$baseUrl/adminlte/dist/img/avatar5.png" class="user-image" alt="User Image">-->
+                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="hidden-xs"><?= Html::encode(Yii::$app->user->identity->nombre_completo)?></span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
-                            <li class="user-header">
-                                <img src="<?=$baseUrl?>/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
+                            <li class="user-header" style="height: 100px !important;">
+                                <span class="glyphicon glyphicon-user"></span>
                                 <p>
-                        <?= Html::encode(Yii::$app->user->identity->username)?> -
-                        <small>Miembro desde <?= Yii::$app->formatter->asDate(Html::encode(Yii::$app->user->identity->created_at), 'dd/MM/yyyy')?></small>
+                                    <small>Miembro desde <?= Yii::$app->formatter->asDate(Html::encode(Yii::$app->user->identity->created_at), 'dd/MM/yyyy')?></small>
                                 </p>
                             </li>
                             <!-- Menu Body -->
-                            <li class="user-body">
+                            <!--<li class="user-body">
                                 <div class="row">
                                     <div class="col-xs-4 text-center">
                                         <a href="#">Followers</a>
@@ -261,12 +309,12 @@ use yii\helpers\Html;
                                         <a href="#">Friends</a>
                                     </div>
                                 </div>
-                                <!-- /.row -->
-                            </li>
+
+                            </li>-->
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">Ver Perfil</a>
+                                    <a href="<?= Html::encode(\yii\helpers\Url::toRoute('/user/perfil-usuario', true))?>" class="btn btn-default btn-flat">Ver Perfil</a>
                                 </div>
                                 <div class="pull-right">
                                     <?=
@@ -279,9 +327,9 @@ use yii\helpers\Html;
                         </ul>
                     </li>
                     <!-- Control Sidebar Toggle Button -->
-                    <li>
+                    <!--<li>
                         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                    </li>
+                    </li>-->
 
                 <?php
                    }

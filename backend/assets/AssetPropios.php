@@ -15,11 +15,15 @@ class AssetPropios extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'breadcrumbs/css/style.css',
+        'css/site.css',
     ];
     public $js = [
         'breadcrumbs/js/modernizr.js',
+        'js/main.js',
+        //'js/ajax-modal-popup.js',
     ];
     public $depends = [
+        'sateler\rut\RutWidgetAsset',
     ];
 
 }

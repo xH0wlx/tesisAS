@@ -1,57 +1,118 @@
 <?php
-
+use kartik\helpers\html;
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 
-$this->title = 'ASFACEUBB - Plan de Mejoramiento UBB 1402';
+$this->title = 'Inicio';
+
 ?>
 <div class="site-index">
-    <div class="callout callout-warning">
-        <h4>Cuidado!</h4>
 
-        <p><b>Demasiada</b> sensualidad.</p>
+    <div class="box box-primary">
+        <div class="box-header with-border"><h3 class="box-title">Proceso en Curso (<?=$modelPeriodo->anio?>-<?=$modelPeriodo->semestre?>)</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="col-lg-4 col-xs-12">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>Match</h3>
+                        <br>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-handshake-o"></i>
+                    </div>
+                    <a  href="<?= Html::encode(Url::toRoute(['/match1/seleccion', 'anio'=> $modelPeriodo->anio,'semestre'=>$modelPeriodo->semestre]))?>" class="small-box-footer">
+                        Ir <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-12">
+                <!-- small box -->
+                <div class="small-box bg-blue">
+                    <div class="inner">
+                        <h3>Servicio</h3>
+                        <br>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-exchange" aria-hidden="true"></i>
+                    </div>
+                    <a  href="<?= Html::encode(Url::toRoute(['/servicio/seleccion-requerimientos', 'anio'=> $modelPeriodo->anio,'semestre'=>$modelPeriodo->semestre]))?>" class="small-box-footer">
+                        Ir <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-12">
+                <!-- small box -->
+                <div class="small-box bg-light-blue">
+                    <div class="inner">
+                        <h3>Implementación</h3>
+                        <br>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-university" aria-hidden="true"></i>
+                    </div>
+                    <a  href="<?= Html::encode(Url::toRoute(['/implementacion/seleccion-asignatura', 'anio'=> $modelPeriodo->anio,'semestre'=>$modelPeriodo->semestre]))?>" class="small-box-footer">
+                        Ir <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <!--<div class="jumbotron">
-        <h1>Congratulations!</h1>
+    <!--
+    <div class="row">
+        <?php
+        $i=0;
+        for($i=0; $i<=0; $i++){
+        ?>
+        <div class="col-lg-3 col-xs-6">
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3><?= $contRequerimientosNoAsignados ?></h3>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+                    <p>Requerimientos No Asignados (con un servicio)</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-database"></i>
+                </div>
+                <a href="#" class="small-box-footer">
+                    Más información <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <?php
+        }
+        ?>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3><?= $contSociosSinRequerimientos ?></h3>
+
+                    <p>Socios Comunitarios Institucionales</p>
+                      <p>Sin Requerimientos Asignados</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-database"></i>
+                </div>
+                <a href="#" class="small-box-footer">
+                    Más información <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
     </div>-->
+
+    <br><br>
 
     <div class="body-content">
 
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p><?=Yii::getAlias('@web')."/site";?>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
 
     </div>
 </div>

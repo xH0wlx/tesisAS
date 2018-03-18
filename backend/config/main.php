@@ -13,9 +13,19 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'gridview' =>  [
+            'class' => '\kartik\grid\Module'
+            // enter optional module parameters below - only if you need to
+            // use your own export download action or custom translation
+            // message source
+            // 'downloadAction' => 'gridview/export/download',
+            // 'i18n' => []
+        ]
+    ],
 
-    'on beforeAction' => function ($event){
+    //PUEDE PROVOCAR QUE SI EL USUARIO SE EQUIVOCA MUCHAS VECES, LUEGO LO INTENTE MANDAR AL LOGIN DE NUEVO
+/*    'on beforeAction' => function ($event){
         //Si el usuario no esta registrado, ingreso una dirección diferente de url y esa dirección es un error
         if(
             Yii::$app->user->isGuest && Yii::$app->getRequest()->url !== Url::to(Yii::$app->getUser()->loginUrl)
@@ -28,7 +38,28 @@ return [
             return;
         }
 
-    },
+    },*/
+
+    'as beforeRequest' => [
+        'class' => 'yii\filters\AccessControl',
+        'rules' => [
+            [
+                //TODOS LOS USUARIOS NO REGISTRADOS PUEDEN VER EL LOGIN
+                'allow' => true,
+                'actions' => ['login', 'recoverpass', 'resetpass'],
+                //SIN ROLES
+            ],
+            [
+                //TODOS LOS USUARIOS AUTENTICADOS PUEDEN VER TODO
+                //ACTIONS
+                'allow' => true,
+                'roles' => ['@'],
+            ],
+        ],
+        'denyCallback' => function () {
+            return Yii::$app->response->redirect(['site/login']);
+        },
+    ],
 
 /*    'as beforeRequest' => [
         'class' => \yii\filters\AccessControl::className(),//AccessControl::className(),
@@ -53,6 +84,45 @@ return [
     ],*/
 
     'components' => [
+        'funcionespropias' => [
+            'class' => 'backend\components\FuncionesPropias',
+        ],
+        'mensaje' => [
+            'class' => 'backend\components\Mensaje',
+        ],
+        'estados' => [
+            'class' => 'backend\components\Estados',
+        ],
+        'correos' => [
+            'class' => 'backend\components\Correos',
+        ],
+        /*
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => null,
+                    'basePath' => '@webroot',
+                    'baseUrl' => '@web',
+                    'js' => [
+                        'js/jquery.js',
+                    ]
+                ],
+            ],
+        ],*/
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'useFileTransport' => false,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'asfaceubb@gmail.com',
+                'password' => 'asface@2016',
+                'port' => '465',
+                'encryption' => 'ssl',
+                //'port' => '465',
+                //'encryption' => 'ssl',
+            ],
+        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
@@ -88,6 +158,10 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                //'donpepe/y-sus-globos' => 'bitacora/index',
+                /*[
+                    'class' => 'backend\components\ImplementacionUrlRule',
+                ],*/
             ],
         ],
         
