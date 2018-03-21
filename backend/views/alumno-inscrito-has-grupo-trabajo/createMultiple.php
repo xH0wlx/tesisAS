@@ -21,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile('@web/js/implementacion/funciones.js', ['depends' => [\yii\web\JqueryAsset::className()] ] );
 
-
 ?>
 <div class="box box-primary collapsed-box">
     <div class="box-header with-border"><h3 class="box-title">Cantidad de grupos</h3>

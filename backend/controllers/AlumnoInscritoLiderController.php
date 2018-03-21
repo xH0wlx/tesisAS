@@ -273,6 +273,95 @@ class AlumnoInscritoLiderController extends Controller
         }
         echo Json::encode(['output'=>'', 'selected'=>'']);
     }
+
+    public function actionModificarAsignacionesGrupo($idGrupoTrabajo){
+
+        // Comprobación de que el parámetro pasado por url sea correcto
+        $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
+        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+
+        $request = Yii::$app->request;
+
+        // Creación del modelo del formulario y  Precargamos la id del grupo
+        $modeloAsignaciones = new GrupoTrabajoHasScb();
+        $modeloAsignaciones->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
+
+        // Pide las asignaciones de socios a este grupo para el historial
+        $asignacionesActivas = GrupoTrabajoHasScb::find()->where([
+            "grupo_trabajo_id_grupo_trabajo" => $grupoTrabajo->id_grupo_trabajo
+        ])->orderBy(['creado_en' => SORT_DESC])->all();
+
+
+        if ( $modeloAsignaciones->load($request->post()) && $modeloAsignaciones->validate() ) {
+            //$modeloAsignaciones->__unset('observacion');
+            //$modeloAsignaciones->__unset('cambio');
+
+            // Verifica que no se agregue un scb que este vigente (no cambiodo [cambio = 0])
+            if( !GrupoTrabajoHasScb::find()->where([
+                'grupo_trabajo_id_grupo_trabajo' => $modeloAsignaciones->grupo_trabajo_id_grupo_trabajo,
+                'scb_id_scb' => $modeloAsignaciones->scb_id_scb,
+                'cambio' => 0
+                ])->exists()
+            ){
+                // Verifica si se va a reemplazar un socio comunitario con el fin de deshailitarlo
+                if($modeloAsignaciones->id_reemplazo_scb != null){
+                    $modelosReemplazados = GrupoTrabajoHasScb::find()->where([
+                        'grupo_trabajo_id_grupo_trabajo' => $modeloAsignaciones->grupo_trabajo_id_grupo_trabajo,
+                        'scb_id_scb'=>$modeloAsignaciones->id_reemplazo_scb,
+                        'cambio' => 0,
+                    ])->all();
+                    if($modelosReemplazados != null){
+
+                        Yii::$app->mensaje->mensajeGrowl('info', 'Reemplazo exitoso.');
+                        $modeloAsignaciones->save();
+
+                        foreach ($modelosReemplazados as $modeloReemplazado){
+                            $modeloReemplazado->cambio = 1;
+                            $modeloReemplazado->save();
+                        }
+                    }else{
+                        Yii::$app->mensaje->mensajeGrowl('error', 'Socio reemplazado no activo.');
+                    }
+                }else{
+                    Yii::$app->mensaje->mensajeGrowl('info', 'Socio agregado exitosamente.');
+                    $modeloAsignaciones->save();
+                }
+            }else{
+                Yii::$app->mensaje->mensajeGrowl('error', 'Socio Beneficiario ya EXISTE!');
+            }
+
+            // ELIMINACIÓN DE SCB (SOFT)
+            if($modeloAsignaciones->cambio == 1 && $modeloAsignaciones->id_reemplazo_scb == ""){
+                $aDesactivar = GrupoTrabajoHasScb::find()->where([
+                    'grupo_trabajo_id_grupo_trabajo' => $modeloAsignaciones->grupo_trabajo_id_grupo_trabajo,
+                    'scb_id_scb' => $modeloAsignaciones->scb_id_scb
+                ])->all();
+                foreach ($aDesactivar as $target){
+                    $target->cambio = 1;
+                    $target->save();
+                }
+                $modeloAsignaciones->observacion = "Eliminado";
+                $modeloAsignaciones->save();
+                Yii::$app->mensaje->mensajeGrowl('info', 'Socio Beneficiario eliminado');
+            }
+
+            return $this->render('modificarAsignaciones', [
+                'post'                  =>  $request->post(),
+                'modeloAsignaciones'    =>  $modeloAsignaciones,
+                'asignacionesActivas'   =>  $asignacionesActivas,
+                'grupoTrabajo'          =>  $grupoTrabajo,
+                'alumnosGrupo'          =>  $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions,
+            ]);
+        }// FIN IF DE POST
+
+        return $this->render('modificarAsignaciones', [
+            'modeloAsignaciones'    =>  $modeloAsignaciones,
+            'asignacionesActivas'   =>  $asignacionesActivas,
+            'grupoTrabajo'          =>  $grupoTrabajo,
+            'alumnosGrupo'          =>  $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions,
+        ]);
+    }
+
     /**
      * Updates an existing alumnoInscritoLider model.
      * For ajax request will return json object

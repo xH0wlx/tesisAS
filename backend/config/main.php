@@ -96,7 +96,6 @@ return [
         'correos' => [
             'class' => 'backend\components\Correos',
         ],
-        /*
         'assetManager' => [
             'bundles' => [
                 'yii\web\JqueryAsset' => [
@@ -108,7 +107,7 @@ return [
                     ]
                 ],
             ],
-        ],*/
+        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             'useFileTransport' => false,

@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Panel de Implementación',
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile('@web/js/implementacion/funciones.js', ['depends' => [\yii\web\JqueryAsset::className()] ] );
-
+$this->registerJsFile('@web/js/implementacion/asignar-lider/asignar-lider.js', ['depends' => [\yii\web\JqueryAsset::className()] ] );
 
 ?>
 
@@ -130,14 +130,55 @@ $this->registerJsFile('@web/js/implementacion/funciones.js', ['depends' => [\yii
                                                 ],
                                             ])->label("Soci@ C. Beneficiari@");
 
+                                            echo $form->field($modelosSCBS[$index], '['.$index.']scb_id_scb')->hiddenInput()->label(false);
+
                                             if (!$modelosSCBS[$index]->isNewRecord) {
                                               /*  echo $form->field($modelosSCBS[$index], '['.$index.']observacion')->textInput()
                                                 ->hint('Este grupo ya tenía un socio beneficiario asignado,<br> si lo modifica, debe agregar una observación')->label('Observación del Cambio');
                                          */   }
+
+
+                                        echo $form->field($modelosSCBS[$index], '['.$index.']scb_id_scb')->textInput();
+
+                                        ?>
+
+                                        <div class="form-group input_fields_wrap">
+                                            <?= Html::activeLabel($modelosSCBS[$index], 'scb_id_scb'); ?>
+                                            <div class="input-group mb-3">
+                                                <input name="GrupoTrabajoHasScb[<?= $index ?>][scb_id_scb]" type="text" class="form-control profesion_o_grado" value="<?= $modelosSCBS[$index]->scb_id_scb ?>">
+                                                <?= Html::error($modelosSCBS[$index], 'scb_id_scb'); ?>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary add_field_button"> + </button>
+                                                </div>
+                                            </div>
+<!--                                            <?php
+/*                                            if(count($profesion) > 1 ){
+                                                $largo = count($profesion);
+                                                for($i=1; $i < $largo; $i++){
+                                                    */?>
+
+                                                    <div class="input-group mb-3">
+                                                        <input name="ge_funcionario[profesion][]" type="text" class="form-control profesion_o_grado" value="<?php /*echo esc_attr($profesion[$i]); */?>">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-danger remove_field" type="button"> -&nbsp;  </button>
+                                                        </div>
+                                                    </div>
+
+                                                    --><?php
+/*                                                }
+                                            }
+
+                                            */?>
+                                            <?= Html::a('<i class="fa fa-chevron-circle-left"></i> Modificar', ['/alumno-inscrito-lider/modificar-asignaciones-grupo', 'idGrupoTrabajo' => $grupoTrabajo->id_grupo_trabajo],
+                                                ['class' =>'btn btn-danger']) ?>
+
+                                            <?php
                                             echo "</td>";
                                             $bandera=false;
-                                        }//FIN IF BANDERA
-                                        ?>
+                                            }//FIN IF BANDERA
+                                            ?>
+                                        </div>
+
                                     </tr>
                                 <?php
                                 }

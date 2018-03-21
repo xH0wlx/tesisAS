@@ -13,6 +13,8 @@ use Yii;
  * @property string $creado_en
  * @property string $modificado_en
  * @property string $observacion
+ * @property string $cambio
+ * @property string $id_reemplazo_scb
  *
  * @property GrupoTrabajo $grupoTrabajoIdGrupoTrabajo
  * @property Scb $scbIdScb
@@ -35,13 +37,15 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
     {
         return [
             [['observacion'], 'required', 'on' => self::SCENARIO_OBSERVACION],
-            [['scb_id_scb'], 'required', 'on' => self::SCENARIO_OBSERVACION],
+            [['scb_id_scb'], 'required'],
             [['grupo_trabajo_id_grupo_trabajo'], 'required'],
             [['grupo_trabajo_id_grupo_trabajo', 'scb_id_scb', 'cambio'], 'integer'],
             [['creado_en', 'modificado_en'], 'safe'],
             [['observacion'], 'string', 'max' => 200],
+            ['scb_id_scb', 'compare', 'compareAttribute' => 'id_reemplazo_scb', 'operator' => '!=', 'message' => 'No se puede reemplazar a sí mismo.'],
             [['grupo_trabajo_id_grupo_trabajo'], 'exist', 'skipOnError' => true, 'targetClass' => GrupoTrabajo::className(), 'targetAttribute' => ['grupo_trabajo_id_grupo_trabajo' => 'id_grupo_trabajo']],
             [['scb_id_scb'], 'exist', 'skipOnError' => true, 'targetClass' => Scb::className(), 'targetAttribute' => ['scb_id_scb' => 'id_scb']],
+            [['id_reemplazo_scb'], 'exist', 'skipOnError' => true, 'targetClass' => GrupoTrabajoHasScb::className(), 'targetAttribute' => ['id_reemplazo_scb' => 'scb_id_scb']],
         ];
     }
 
@@ -53,11 +57,12 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
         return [
             'id_grupo_trabajo_has_scb' => 'Id Grupo Trabajo Has Scb',
             'grupo_trabajo_id_grupo_trabajo' => 'Grupo Trabajo Id Grupo Trabajo',
-            'scb_id_scb' => 'Scb Id Scb',
-            'creado_en' => 'Creadon En',
+            'scb_id_scb' => 'Socio Comunitario Beneficiario',
+            'creado_en' => 'Creado En',
             'modificado_en' => 'Modificado En',
-            'observacion' => 'Observacion',
+            'observacion' => 'Observación',
             'cambio' => 'Lo Cambiaron? 1 sí, 0 no',
+            'id_reemplazo_scb' => 'Reemplaza a',
         ];
     }
 
@@ -75,5 +80,10 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
     public function getScbIdScb()
     {
         return $this->hasOne(Scb::className(), ['id_scb' => 'scb_id_scb']);
+    }
+
+    public function getReemplazado()
+    {
+        return $this->hasOne(Scb::className(), ['id_scb' => 'id_reemplazo_scb']);
     }
 }
