@@ -42,6 +42,7 @@ $("#reemplazar-form").on(\'beforeSubmit\', function (e) {
                 // data is saved
                 alert("Datos guardados exitosamente.");
                 $("#modalSCB").modal(\'hide\');
+                location.reload();
             } else if (data.validation) {
                 // server validation failed
                 $yiiform.yiiActiveForm(\'updateMessages\', data.validation, true); // renders validation messages at appropriate places

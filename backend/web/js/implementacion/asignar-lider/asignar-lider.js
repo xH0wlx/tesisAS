@@ -10,10 +10,16 @@ $(botonAgregar).on("click", function(e){
 });
 
 $(".modalButton").click(function (){
+    var boton = $(this);
     $.get($(this).attr('href'), function(data) {
+        var title = boton.data('title');
         $("#modalSCB").modal('show').find("#modalContentSCB").html(data);
+        $("#modalSCB .modal-header").text(title);
     });
     return false;
+});
+
+$('#modalSCB').on('hide.bs.modal', function (e) {
 });
 
 

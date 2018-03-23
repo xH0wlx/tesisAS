@@ -40,6 +40,7 @@ echo Dialog::widget([
                 <tr>
                     <th>N°</th>
                     <th>Fecha</th>
+                    <th>Hora</th>
                     <th>Socio Comunitario Beneficiario</th>
                     <th>Observación</th>
                 </tr>
@@ -48,6 +49,7 @@ echo Dialog::widget([
                 echo "<tr>";
                 echo "<td><span class=\"badge alert-". (($asignacionActiva->cambio == 0)?"info":"default") ."\">". ($index+1) ."</span></td>";
                 echo "<td><span class=\"label label-success\">". Yii::$app->formatter->asDate($asignacionActiva->creado_en, 'd/M/Y') ."</span></td>";
+                echo "<td><span class=\"label label-success\">". Yii::$app->formatter->asDate($asignacionActiva->creado_en, 'H:i:s') ."</span></td>";
                 if($asignacionActiva->id_reemplazo_scb != null){
                     ?>
                     <td>

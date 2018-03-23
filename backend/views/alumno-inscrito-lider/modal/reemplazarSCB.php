@@ -42,6 +42,7 @@ $("#reemplazar-form").on(\'beforeSubmit\', function (e) {
                 // data is saved
                 alert("Datos guardados exitosamente.");
                 $("#modalSCB").modal(\'hide\');
+                location.reload();
             } else if (data.validation) {
                 // server validation failed
                 $yiiform.yiiActiveForm(\'updateMessages\', data.validation, true); // renders validation messages at appropriate places
@@ -57,6 +58,7 @@ $("#reemplazar-form").on(\'beforeSubmit\', function (e) {
 
     return false; // prevent default form submission
 });
+
 ';
 $this->registerJs($js);
 
@@ -65,6 +67,7 @@ $this->registerJs($js);
 <div class="alumno-inscrito-lider-modificacion">
     <?php $form = ActiveForm::begin(['id' => "reemplazar-form"]); ?>
         <div class="form-group">
+            <h3>Reemplazar a <?= $modeloAsignacion->reemplazado->nombre_negocio ?> por:</h3>
             <div class="row">
                 <?= Html::hiddenInput('id_registro_reemplazado', $id_registro_reemplazado); ?>
                 <div class="col-sm-12 col-md-6">
@@ -82,15 +85,7 @@ $this->registerJs($js);
                     <?= $form->field($modeloAsignacion, "observacion")->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-sm-12 col-md-6">
-                    <?= $form->field($modeloAsignacion, 'id_reemplazo_scb')->widget(Select2::classname(), [
-                        'data' => $modeloAsignacion->scbLista,
-                        'language' => 'es',
-                        'theme' => 'default',
-                        'options' => [/*'id' => 'sciField', 'class' => 'form-control',*/ 'placeholder' => 'Seleccione Socio ...'],
-                        'pluginOptions' => [
-                            'allowClear' => false
-                        ],
-                    ])->label('Socio C. Beneficiario'); ?>
+                    <?= $form->field($modeloAsignacion, "id_reemplazo_scb")->hiddenInput()->label(false) ?>
                 </div>
             </div><!-- .row -->
             <?= Html::submitButton('Guardar' , ['class' =>  'btn btn-success btn-md']) ?>
