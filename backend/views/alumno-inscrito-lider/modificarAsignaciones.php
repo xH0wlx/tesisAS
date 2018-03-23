@@ -1,11 +1,18 @@
 <?php
 use yii\helpers\Html;
+use yii\bootstrap\modal;
 use yii\widgets\ActiveForm;
+use wbraganca\dynamicform\DynamicFormWidget;
 use kartik\select2\Select2;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use kartik\switchinput\SwitchInput;
 
+use kartik\dialog\Dialog;
+use kartik\growl\GrowlAsset;
+use kartik\base\AnimateAsset;
+GrowlAsset::register($this);
+AnimateAsset::register($this);
 /* @var $this yii\web\View */
 /* @var $model backend\models\alumnoInscritoLider */
 /* @var $form yii\widgets\ActiveForm */
@@ -19,9 +26,23 @@ $request = Yii::$app->request;
 $this->title = 'Modificar Asignaciones Grupo de Trabajo';
 //array_push ( $this->params['breadcrumbs'][], $this->title );
 
+echo Dialog::widget([
+    //'libName' => 'krajeeDialogCust', // optional if not set will default to `krajeeDialog`
+    //'options' => ['draggable' => true, 'closable' => true], // custom options
+]);
+
+Modal::begin([
+    'header' => 'SCB',
+    'id' => 'modalSCB',
+    'size' => 'modal-lg',
+]);
+echo "<div id='modalContentSCB'></div>";
+Modal::end();
+
 $this->registerJsFile('@web/js/implementacion/funciones.js', ['depends' => [\yii\web\JqueryAsset::className()] ] );
 $this->registerJsFile('@web/js/implementacion/asignar-lider/asignar-lider.js', ['depends' => [\yii\web\JqueryAsset::className()] ] );
 
+$request = Yii::$app->request;
 ?>
 
 <div class="alumno-inscrito-lider-modificacion">
@@ -54,26 +75,47 @@ $this->registerJsFile('@web/js/implementacion/asignar-lider/asignar-lider.js', [
             </table>
         </div>
     </div>
-    <div id="form-prueba">
+
+    <a class="modalButton btn btn-primary" href="<?=Url::to(['alumno-inscrito-lider/crear-scb',
+        'idGrupoTrabajo'=>$request->get('idGrupoTrabajo')]); ?>">Asignar Socio</a>
+    <a class="modalButton btn btn-primary" href="<?=Url::to(['alumno-inscrito-lider/ver-historial-scb',
+        'idGrupoTrabajo'=>$request->get('idGrupoTrabajo')]); ?>">Ver Historial</a>
+
+    <div id="formulario-asignaciones">
         <?php $form = ActiveForm::begin(); ?>
-
-        <?= $form->field($modeloAsignaciones, 'scb_id_scb')->textInput() ?>
-
-        <?php //$form->field($modeloAsignaciones, 'modificado_en')->textInput() ?>
-
-        <?= $form->field($modeloAsignaciones, 'observacion')->textInput() ?>
-        <?= $form->field($modeloAsignaciones, 'cambio')->textInput() ?>
-
-        <?= $form->field($modeloAsignaciones, 'id_reemplazo_scb')->textInput() ?>
-
-        <?php if (!Yii::$app->request->isAjax){ ?>
-            <div class="form-group">
-                <?= Html::submitButton($modeloAsignaciones->isNewRecord ? 'Crear' : 'Modificar', ['class' => $modeloAsignaciones->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php foreach ($arrayModelosAsignaciones as $i => $arrayModeloAsignaciones): ?>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title pull-left"></h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-body">
+                    <?php
+                    // necessary for update action.
+                    if (! $arrayModeloAsignaciones->isNewRecord) {
+                        echo Html::activeHiddenInput($arrayModeloAsignaciones, "[{$i}]id_grupo_trabajo_has_scb");
+                    }
+                    ?>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3">
+                            <?= $form->field($arrayModeloAsignaciones, "[{$i}]scb_id_scb")->textInput(['maxlength' => true]) ?>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <?= $form->field($arrayModeloAsignaciones, "[{$i}]observacion")->textInput(['maxlength' => true]) ?>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <?= $form->field($arrayModeloAsignaciones, "[{$i}]cambio")->textInput(['maxlength' => true]) ?>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <?= $form->field($arrayModeloAsignaciones, "[{$i}]id_reemplazo_scb")->textInput(['maxlength' => true]) ?>
+                        </div>
+                    </div><!-- .row -->
+                </div>
             </div>
-        <?php } ?>
-
+        <?php endforeach; ?>
         <?php ActiveForm::end(); ?>
     </div>
+
     <div id="asignaciones-previas-box">
 
         <?php
@@ -99,6 +141,28 @@ $this->registerJsFile('@web/js/implementacion/asignar-lider/asignar-lider.js', [
                                 <td><span class="label label-default"><?= $asignacionActiva->observacion ?></span></td>
                         <?php
                     }
+                    ?>
+                    <td>
+                        <?php
+                            if($asignacionActiva->cambio == 0) {
+                        ?>
+                        <a class="modalButton btn btn-primary" href="<?=Url::to(['alumno-inscrito-lider/reemplazar-scb',
+                            'idAsignacion'=>$asignacionActiva->id_grupo_trabajo_has_scb]); ?>">Reemplazar Socio</a>
+                        <?php
+                            }
+                        ?>
+                        <?php
+                            if($asignacionActiva->cambio == 0) {
+                        ?>
+                                <a class="modalButton btn btn-primary"
+                                   href="<?= Url::to(['alumno-inscrito-lider/eliminar-scb',
+                                       'idAsignacion' => $asignacionActiva->id_grupo_trabajo_has_scb]); ?>">Eliminar
+                                    Socio</a>
+                        <?php
+                            }
+                        ?>
+                    </td>
+                    <?php
                     echo "</tr>";
                 }// FIN FOR EACH
                 echo "</table>";

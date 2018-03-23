@@ -285,6 +285,7 @@ class AlumnoInscritoLiderController extends Controller
         // Creación del modelo del formulario y  Precargamos la id del grupo
         $modeloAsignaciones = new GrupoTrabajoHasScb();
         $modeloAsignaciones->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
+        $arrayModelosAsignaciones = $grupoTrabajo->grupoTrabajoHasScbsNoCambiados;
 
         // Pide las asignaciones de socios a este grupo para el historial
         $asignacionesActivas = GrupoTrabajoHasScb::find()->where([
@@ -348,6 +349,7 @@ class AlumnoInscritoLiderController extends Controller
             return $this->render('modificarAsignaciones', [
                 'post'                  =>  $request->post(),
                 'modeloAsignaciones'    =>  $modeloAsignaciones,
+                'arrayModelosAsignaciones'   =>  (empty($arrayModelosAsignaciones))? [new GrupoTrabajoHasScb]: $arrayModelosAsignaciones,
                 'asignacionesActivas'   =>  $asignacionesActivas,
                 'grupoTrabajo'          =>  $grupoTrabajo,
                 'alumnosGrupo'          =>  $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions,
@@ -355,11 +357,163 @@ class AlumnoInscritoLiderController extends Controller
         }// FIN IF DE POST
 
         return $this->render('modificarAsignaciones', [
-            'modeloAsignaciones'    =>  $modeloAsignaciones,
-            'asignacionesActivas'   =>  $asignacionesActivas,
-            'grupoTrabajo'          =>  $grupoTrabajo,
-            'alumnosGrupo'          =>  $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions,
+            'modeloAsignaciones'        =>  $modeloAsignaciones,
+            'arrayModelosAsignaciones'   =>  (empty($arrayModelosAsignaciones))? [new GrupoTrabajoHasScb]: $arrayModelosAsignaciones,
+            'arrayModelosAsignacionesVacio'   =>  [new GrupoTrabajoHasScb],
+            'asignacionesActivas'       =>  $asignacionesActivas,
+            'grupoTrabajo'              =>  $grupoTrabajo,
+            'alumnosGrupo'              =>  $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions,
         ]);
+    }
+
+    public function actionCrearScb($idGrupoTrabajo){
+        $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
+        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+
+        $request = Yii::$app->request;
+        if($request->isAjax){
+            $modeloAsignacion = new GrupoTrabajoHasScb();
+            $modeloAsignacion->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
+            if($request->isGet){
+                return $this->renderAjax('modal/crearSCB', [
+                    'modeloAsignacion' => $modeloAsignacion,
+                ]);
+            }else if($request->isPost){
+                if ($modeloAsignacion->load(Yii::$app->request->post()) && $modeloAsignacion->validate()) {
+                    // Verifica que no se agregue un scb que este vigente (no cambiodo [cambio = 0])
+                    if( !GrupoTrabajoHasScb::find()->where([
+                        'grupo_trabajo_id_grupo_trabajo' => $modeloAsignacion->grupo_trabajo_id_grupo_trabajo,
+                        'scb_id_scb' => $modeloAsignacion->scb_id_scb,
+                        'cambio' => 0
+                    ])->exists()
+                    ){
+                        $modeloAsignacion->observacion="Agregado";
+                        $modeloAsignacion->save();
+                        return $this->asJson(['success' => true]);
+                    }
+
+                }
+
+                $result = [];
+                // The code below comes from ActiveForm::validate(). We do not need to validate the model
+                // again, as it was already validated by save(). Just collect the messages.
+                foreach ($modeloAsignacion->getErrors() as $attribute => $errors) {
+                    $result[Html::getInputId($modeloAsignacion, $attribute)] = $errors;
+                }
+
+                return $this->asJson(['validation' => $result]);
+            }
+        }
+        return false;
+    }
+
+    public function actionReemplazarScb($idAsignacion){
+        $modeloAsignacionReemplazo = GrupoTrabajoHasScb::findOne($idAsignacion);
+
+        if( $modeloAsignacionReemplazo == null ){ die("ID de la asignación incorrecto."); }
+
+        $modeloAsignacionReemplazoVacio = new GrupoTrabajoHasScb(['scenario' => GrupoTrabajoHasScb::SCENARIO_OBSERVACION]);
+        $modeloAsignacionReemplazoVacio->id_reemplazo_scb = $modeloAsignacionReemplazo->scb_id_scb;
+        $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo = $modeloAsignacionReemplazo->grupo_trabajo_id_grupo_trabajo;
+
+        $request = Yii::$app->request;
+        if($request->isAjax){
+            //$modeloAsignacion->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
+            if($request->isGet){
+                return $this->renderAjax('modal/reemplazarSCB', [
+                    'modeloAsignacion' => $modeloAsignacionReemplazoVacio,
+                    'id_registro_reemplazado' => $modeloAsignacionReemplazo->id_grupo_trabajo_has_scb
+                ]);
+            }else if($request->isPost){
+                if ($modeloAsignacionReemplazoVacio->load(Yii::$app->request->post()) && $modeloAsignacionReemplazoVacio->validate() && !empty(Yii::$app->request->post('id_registro_reemplazado')) ) {
+                    $modeloAsignacionReemplazo = GrupoTrabajoHasScb::findOne(Yii::$app->request->post('id_registro_reemplazado'));
+                    if($modeloAsignacionReemplazo != null){
+                        $modeloAsignacionReemplazo->cambio = 1;
+                        if( !GrupoTrabajoHasScb::find()->where([
+                            'grupo_trabajo_id_grupo_trabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo,
+                            'scb_id_scb' => $modeloAsignacionReemplazoVacio->scb_id_scb,
+                            'cambio' => 0
+                        ])->exists()
+                        ){
+                            if($modeloAsignacionReemplazo->save() && $modeloAsignacionReemplazoVacio->save()){
+                                return $this->asJson(['success' => true]);
+                            }
+                        }
+
+                    }
+
+                }
+
+                $result = [];
+                // The code below comes from ActiveForm::validate(). We do not need to validate the model
+                // again, as it was already validated by save(). Just collect the messages.
+                foreach ($modeloAsignacionReemplazoVacio->getErrors() as $attribute => $errors) {
+                    $result[Html::getInputId($modeloAsignacionReemplazoVacio, $attribute)] = $errors;
+                }
+
+                return $this->asJson(['validation' => $result]);
+            }
+        }
+        return false;
+    }
+
+    public function actionEliminarScb($idAsignacion){
+        $request = Yii::$app->request;
+        $modeloAsignacionReemplazo = GrupoTrabajoHasScb::findOne($idAsignacion);
+
+        if( $modeloAsignacionReemplazo == null ){ die("ID de la asignación incorrecto."); }
+
+
+        if($request->isAjax){
+            //$modeloAsignacion->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
+            if($request->isGet){
+                return $this->renderAjax('modal/eliminarSCB', [
+                    'modeloAsignacion' => $modeloAsignacionReemplazo,
+                ]);
+            }else if($request->isPost){
+                if ($modeloAsignacionReemplazo->load(Yii::$app->request->post())) {
+
+                    $modeloAsignacionReemplazoVacio = new GrupoTrabajoHasScb();
+                    $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo = $modeloAsignacionReemplazo->grupo_trabajo_id_grupo_trabajo;
+                    $modeloAsignacionReemplazoVacio->scb_id_scb = $modeloAsignacionReemplazo->scb_id_scb;
+                    $modeloAsignacionReemplazoVacio->observacion = "Eliminado";
+                    $modeloAsignacionReemplazoVacio->cambio = $modeloAsignacionReemplazo->cambio;
+
+                    if($modeloAsignacionReemplazo->save() && $modeloAsignacionReemplazoVacio->save()){
+                        return $this->asJson(['success' => true]);
+                    }
+                }
+
+                $result = [];
+                // The code below comes from ActiveForm::validate(). We do not need to validate the model
+                // again, as it was already validated by save(). Just collect the messages.
+                foreach ($modeloAsignacionReemplazo->getErrors() as $attribute => $errors) {
+                    $result[Html::getInputId($modeloAsignacionReemplazo, $attribute)] = $errors;
+                }
+
+                return $this->asJson(['validation' => $result]);
+            }
+        }
+        return false;
+    }
+
+    public function actionVerHistorialScb($idGrupoTrabajo){
+        $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
+        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+        $request = Yii::$app->request;
+        if($request->isAjax){
+            if($request->isGet){
+                // Pide las asignaciones de socios a este grupo para el historial
+                $asignacionesActivas = GrupoTrabajoHasScb::find()->where([
+                    "grupo_trabajo_id_grupo_trabajo" => $grupoTrabajo->id_grupo_trabajo
+                ])->orderBy(['creado_en' => SORT_DESC])->all();
+
+                return $this->renderAjax('modal/historialSCB', [
+                    'asignacionesActivas' => $asignacionesActivas,
+                ]);
+            }
+        }
+        return false;
     }
 
     /**

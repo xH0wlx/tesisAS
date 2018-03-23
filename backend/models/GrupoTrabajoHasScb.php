@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "grupo_trabajo_has_scb".
@@ -85,5 +86,10 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
     public function getReemplazado()
     {
         return $this->hasOne(Scb::className(), ['id_scb' => 'id_reemplazo_scb']);
+    }
+
+    public function getScbLista(){
+        $droptions = Scb::find()->all();
+        return ArrayHelper::map($droptions, 'id_scb', 'nombre_negocio');
     }
 }

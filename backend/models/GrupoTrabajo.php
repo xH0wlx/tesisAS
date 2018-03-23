@@ -18,6 +18,7 @@ use Yii;
  * @property Bitacora[] $bitacoras
  * @property Seccion $seccionIdSeccion
  * @property GrupoTrabajoHasScb[] $grupoTrabajoHasScbs
+ * @property GrupoTrabajoHasScbsNoCambiados[] $grupoTrabajoHasScbsNoCambiados
  */
 class GrupoTrabajo extends \yii\db\ActiveRecord
 {
@@ -126,7 +127,7 @@ class GrupoTrabajo extends \yii\db\ActiveRecord
     public function getGrupoTrabajoHasScbsNoCambiados()
     {
         return $this->hasMany(GrupoTrabajoHasScb::className(), ['grupo_trabajo_id_grupo_trabajo' => 'id_grupo_trabajo'])
-            ->andOnCondition(['cambio' => '0']);
+            ->andOnCondition(['cambio' => '0'])->orderBy(['creado_en' => SORT_DESC]);
     }
 
     public function getUltimoSocioBeneficiario()
