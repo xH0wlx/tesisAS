@@ -43,13 +43,13 @@ Modal::end();
                 <div class="panel box box-primary">
                     <div class="box-header with-border">
                         <h4 class="box-title">Grupo N°<?= $grupoTrabajo->numero_grupo_trabajo ?></h4>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-striped table-hover">
                             <tbody>
                                 <tr>
                                     <th style="width: 15%">Rut Alumno</th>
                                     <th style="width: 40%">Nombre Alumno</th>
                                     <th style="width: 10%">Líder</th>
-                                    <th style="width: 35%">Socio Comunitario Beneficiario</th>
+                                    <th style="width: 35%">Socios Comunitarios Beneficiarios</th>
                                 </tr>
                             <?php
                                 $alumnosGrupo = $grupoTrabajo->alumnoInscritoSeccionIdAlumnoInscritoSeccions;
@@ -102,7 +102,7 @@ Modal::end();
 
 
                                             echo "<div class='vista-parcial'>";
-                                            echo $this->render('modificarAsignaciones', [
+                                            echo $this->render('_modificarAsignaciones', [
                                                 'grupoTrabajo' => $grupoTrabajo,
                                             ]);
                                             echo "</div>";

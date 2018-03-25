@@ -64,6 +64,9 @@ $this->registerJs($js);
 ?>
 
 <div class="alumno-inscrito-lider-modificacion">
+    <?php if(!empty($modeloAsignacion->scbIdScb->nombre_negocio)){
+        echo "<h3>Eliminar la asignación de ".$modeloAsignacion->scbIdScb->nombre_negocio."?</h3>";
+    } ?>
     <?php $form = ActiveForm::begin(['id' => "reemplazar-form"]); ?>
         <div class="form-group">
             <div class="row">
@@ -71,7 +74,7 @@ $this->registerJs($js);
                     <?php echo $form->field($modeloAsignacion, "cambio")->hiddenInput(['value' => 1])->label(false) ?>
                 </div>
             </div><!-- .row -->
-            <?= Html::submitButton('Eliminar Asignación' , ['class' =>  'btn btn-success btn-danger']) ?>
+            <?= Html::submitButton('Confirmar' , ['class' =>  'btn btn-success btn-danger']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 </div>

@@ -92,67 +92,6 @@ class AlumnoInscritoLiderController extends Controller
         }
     }
 
-    /**
-     * Creates a new alumnoInscritoLider model.
-     * For ajax request will return json object
-     * and for non-ajax request if creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $request = Yii::$app->request;
-        $model = new alumnoInscritoLider();  
-
-        if($request->isAjax){
-            /*
-            *   Process for ajax request
-            */
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            if($request->isGet){
-                return [
-                    'title'=> "Crear nuevo alumnoInscritoLider",
-                    'content'=>$this->renderAjax('create', [
-                        'model' => $model,
-                    ]),
-                    'footer'=> Html::button('Cerrar',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
-                                Html::button('Guardar',['class'=>'btn btn-primary','type'=>"submit"])
-        
-                ];         
-            }else if($model->load($request->post()) && $model->save()){
-                return [
-                    'forceReload'=>'#crud-datatable-pjax',
-                    'title'=> "Crear nuevo alumnoInscritoLider",
-                    'content'=>'<span class="text-success">Create alumnoInscritoLider success</span>',
-                    'footer'=> Html::button('Cerrar',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
-                            Html::a('Crar Más',['create'],['class'=>'btn btn-primary','role'=>'modal-remote'])
-        
-                ];         
-            }else{           
-                return [
-                    'title'=> "Crear nuevo alumnoInscritoLider",
-                    'content'=>$this->renderAjax('create', [
-                        'model' => $model,
-                    ]),
-                    'footer'=> Html::button('Cerrar',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
-                                Html::button('Guardar',['class'=>'btn btn-primary','type'=>"submit"])
-        
-                ];         
-            }
-        }else{
-            /*
-            *   Process for non-ajax request
-            */
-            if ($model->load($request->post()) && $model->save()) {
-                return $this->redirect(['view', 'alumno_inscrito_seccion_id_seccion_alumno' => $model->alumno_inscrito_seccion_id_seccion_alumno, 'grupo_trabajo_id_grupo_trabajo' => $model->grupo_trabajo_id_grupo_trabajo]);
-            } else {
-                return $this->render('create', [
-                    'model' => $model,
-                ]);
-            }
-        }
-       
-    }
-
     public function actionAsignarLider($idImplementacion, $idSeccion){
         $request = Yii::$app->request;
         if ($request->isPost) {
@@ -276,26 +215,26 @@ class AlumnoInscritoLiderController extends Controller
 
     public function actionModificarAsignacionesGrupo($idGrupoTrabajo){
 
-        // Comprobación de que el parámetro pasado por url sea correcto
-        $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
-        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+        $grupoDeTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
+        if( $grupoDeTrabajo == null ){ die("No existe grupo de trabajo con la ID asociada."); }
 
         $request = Yii::$app->request;
 
         if($request->isAjax){
             if($request->isGet){
-                $arrayModelosAsignaciones = $grupoTrabajo->grupoTrabajoHasScbsNoCambiados;
+                $arrayModelosAsignaciones = $grupoDeTrabajo->grupoTrabajoHasScbsNoCambiados;
 
                 return $this->renderAjax('modificarAsignaciones', [
                     'arrayModelosAsignaciones'   =>  (empty($arrayModelosAsignaciones))? [new GrupoTrabajoHasScb]: $arrayModelosAsignaciones,
                 ]);
             }
         }
+        return false;
     }
 
     public function actionCrearScb($idGrupoTrabajo){
         $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
-        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+        if( $grupoTrabajo == null ){ die("No existe grupo de trabajo con la ID asociada."); }
 
         $request = Yii::$app->request;
         if($request->isAjax){
@@ -311,7 +250,7 @@ class AlumnoInscritoLiderController extends Controller
                     if( !GrupoTrabajoHasScb::find()->where([
                         'grupo_trabajo_id_grupo_trabajo' => $modeloAsignacion->grupo_trabajo_id_grupo_trabajo,
                         'scb_id_scb' => $modeloAsignacion->scb_id_scb,
-                        'cambio' => 0
+                        'cambio' => GrupoTrabajoHasScb::ESTADO_ACTIVO
                     ])->exists()
                     ){
                         $modeloAsignacion->observacion="Agregado";
@@ -345,7 +284,6 @@ class AlumnoInscritoLiderController extends Controller
 
         $request = Yii::$app->request;
         if($request->isAjax){
-            //$modeloAsignacion->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
             if($request->isGet){
                 return $this->renderAjax('modal/reemplazarSCB', [
                     'modeloAsignacion' => $modeloAsignacionReemplazoVacio,
@@ -355,11 +293,11 @@ class AlumnoInscritoLiderController extends Controller
                 if ($modeloAsignacionReemplazoVacio->load(Yii::$app->request->post()) && $modeloAsignacionReemplazoVacio->validate() && !empty(Yii::$app->request->post('id_registro_reemplazado')) ) {
                     $modeloAsignacionReemplazo = GrupoTrabajoHasScb::findOne(Yii::$app->request->post('id_registro_reemplazado'));
                     if($modeloAsignacionReemplazo != null){
-                        $modeloAsignacionReemplazo->cambio = 1;
+                        $modeloAsignacionReemplazo->cambio = GrupoTrabajoHasScb::ESTADO_INACTIVO;
                         if( !GrupoTrabajoHasScb::find()->where([
                             'grupo_trabajo_id_grupo_trabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo,
                             'scb_id_scb' => $modeloAsignacionReemplazoVacio->scb_id_scb,
-                            'cambio' => 0
+                            'cambio' => GrupoTrabajoHasScb::ESTADO_ACTIVO
                         ])->exists()
                         ){
                             if($modeloAsignacionReemplazo->save() && $modeloAsignacionReemplazoVacio->save()){
@@ -392,7 +330,6 @@ class AlumnoInscritoLiderController extends Controller
 
 
         if($request->isAjax){
-            //$modeloAsignacion->grupo_trabajo_id_grupo_trabajo = $idGrupoTrabajo;
             if($request->isGet){
                 return $this->renderAjax('modal/eliminarSCB', [
                     'modeloAsignacion' => $modeloAsignacionReemplazo,
@@ -431,12 +368,12 @@ class AlumnoInscritoLiderController extends Controller
         if($request->isAjax){
             if($request->isGet){
                 // Pide las asignaciones de socios a este grupo para el historial
-                $asignacionesActivas = GrupoTrabajoHasScb::find()->where([
+                $historialDeAsignaciones = GrupoTrabajoHasScb::find()->where([
                     "grupo_trabajo_id_grupo_trabajo" => $grupoTrabajo->id_grupo_trabajo
                 ])->orderBy(['creado_en' => SORT_DESC])->all();
 
                 return $this->renderAjax('modal/historialSCB', [
-                    'asignacionesActivas' => $asignacionesActivas,
+                    'asignacionesActivas' => $historialDeAsignaciones,
                 ]);
             }
         }

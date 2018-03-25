@@ -23,6 +23,10 @@ use yii\helpers\ArrayHelper;
 class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
 {
     const SCENARIO_OBSERVACION = 'observacion';
+
+    const ESTADO_ACTIVO = 0;
+    const ESTADO_INACTIVO = 1;
+
     /**
      * @inheritdoc
      */
@@ -86,6 +90,10 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
     public function getReemplazado()
     {
         return $this->hasOne(Scb::className(), ['id_scb' => 'id_reemplazo_scb']);
+    }
+
+    public function isActive(){
+        return ($this->cambio == self::ESTADO_ACTIVO);
     }
 
     public function getScbLista(){
