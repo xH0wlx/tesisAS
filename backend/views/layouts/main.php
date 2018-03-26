@@ -5,6 +5,7 @@
 
 use backend\assets\AppAsset;
 use yii\helpers\Html;
+use yii\helpers\Url;
 //use common\widgets\Alert;
 use yii\widgets\Breadcrumbs;
 
@@ -30,8 +31,8 @@ if (Yii::$app->controller->action->id === 'login' || Yii::$app->controller->acti
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="http://asface.ubiobio.cl/w/wp-content/uploads/2016/03/cropped-logo1.png" />
-    <link rel="apple-touch-icon" href="http://asface.ubiobio.cl/w/wp-content/uploads/2016/03/cropped-logo1.png" />
+    <link rel="shortcut icon" href="<?= Url::to(["/favicon.png"]) ?>" />
+    <link rel="apple-touch-icon" href="<?= Url::to(["/favicon.png"]) ?>" />
 
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>

@@ -11,6 +11,7 @@ use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use \yii\web\Response;
@@ -233,6 +234,9 @@ class Seccion2Controller extends Controller
     public function actionUpdateMultiple($id){
         $model = new Implementacion();
         $model = $model->findOne($id); //IMPLEMENTACIÓN
+        if($model == null){
+            throw new HttpException(404, 'La implementación no existe.');
+        }
         $modelsSeccion = $model->seccions;
 
         if (Yii::$app->request->post()) {

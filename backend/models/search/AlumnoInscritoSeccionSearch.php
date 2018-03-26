@@ -88,8 +88,8 @@ class AlumnoInscritoSeccionSearch extends alumnoInscritoSeccion
     public function searchVistaGeneral($params)
     {
         $query = alumnoInscritoSeccion::find();
+        $query->joinWith('alumnoInscritoHasGrupoTrabajos.grupoTrabajoIdGrupoTrabajo.grupoTrabajoHasScbsNoCambiados.scbIdScb')->orderBy('grupo_trabajo.numero_grupo_trabajo');
         $query->joinWith('alumnoRutAlumno');
-        $query->joinWith('grupoTrabajoIdGrupoTrabajo.grupoTrabajoHasScbs.scbIdScb')->orderBy('grupo_trabajo.numero_grupo_trabajo');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

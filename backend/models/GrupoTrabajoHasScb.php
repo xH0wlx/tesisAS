@@ -96,6 +96,17 @@ class GrupoTrabajoHasScb extends \yii\db\ActiveRecord
         return ($this->cambio == self::ESTADO_ACTIVO);
     }
 
+    /**
+     * @return \yii\db\ActiveRecord[]
+     */
+    public static function obtenerSociosBeneficiariosAsignados($idGrupoDeTrabajo, $orderBy = SORT_DESC){
+        $asignacionesSociosAGrupo = self::find()->where([
+            "grupo_trabajo_id_grupo_trabajo" => $idGrupoDeTrabajo
+        ])->orderBy(['creado_en' => $orderBy])->all();
+
+        return $asignacionesSociosAGrupo;
+    }
+
     public function getScbLista(){
         $droptions = Scb::find()->all();
         return ArrayHelper::map($droptions, 'id_scb', 'nombre_negocio');

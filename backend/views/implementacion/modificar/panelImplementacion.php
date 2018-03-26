@@ -474,7 +474,6 @@ if(true){
                                     if (count($seccionCreada->grupoTrabajos) != 0) {
                                         echo  Html::a('<span class="glyphicon glyphicon-pencil"></span> Asignar Líderes y/o Socios C. Beneficiarios',
                                             Url::toRoute(['/implementacion/asignar-lider',
-                                                'idImplementacion'=>$implementacion->id_implementacion,
                                                 'idSeccion'=>$seccionCreada->id_seccion]),
                                             ['class'=>'btn btn-primary btn-block']);
                                     } else {

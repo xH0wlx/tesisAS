@@ -46,7 +46,8 @@ $("#reemplazar-form").on(\'beforeSubmit\', function (e) {
             } else if (data.validation) {
                 // server validation failed
                 $yiiform.yiiActiveForm(\'updateMessages\', data.validation, true); // renders validation messages at appropriate places
-                alert("Error datos incorrectos.");
+            } else if(data.error){
+                alert(data.message);
             } else {
                 // incorrect server response
                 alert("Respuesta inesperada del servidor.");
