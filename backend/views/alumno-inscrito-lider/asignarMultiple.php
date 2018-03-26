@@ -86,17 +86,6 @@ Modal::end();
                                         </td>
 
                                         <?php if($bandera){
-                                            if (!$modelosSCBS[$index]->isNewRecord) {
-                                                $inicializar = true;
-                                                //ID SEDE DE LA ASIGNATURA QUE VIENE PARA UPDATEAR
-                                                $valueSci = $modelosSCBS[$index]->scbIdScb->sciIdSci->id_sci;
-
-                                                //ID CARRERA DE LA ASIGNATURA QUE VIENE PARA UPDATEAR
-                                                echo Html::hiddenInput('input-id_scb'.$index, $modelosSCBS[$index]->scb_id_scb, ['id' => 'input-id_scb'.$index]);
-                                            }else{
-                                                $inicializar = false;
-                                                $valueSci = '';
-                                            }
 
                                             echo "<td rowspan='".count($alumnosGrupo)."'>";
 
@@ -109,7 +98,7 @@ Modal::end();
 
                                             echo "</td>";
                                             $bandera=false;
-                                            }//FIN IF BANDERA
+                                            }//Sólo imprime 1 vez los socios
 
 
                                             ?>

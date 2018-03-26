@@ -990,9 +990,9 @@ class ImplementacionController extends Controller
         return Yii::$app->runAction('alumno-inscrito-has-grupo-trabajo/modificar-multiple', ['idImplementacion' => $idImplementacion, 'idSeccion' => $idSeccion]);
     }
 
-    public function actionAsignarLider($idImplementacion, $idSeccion)
+    public function actionAsignarLider($idSeccion)
     {
-        return Yii::$app->runAction('alumno-inscrito-lider/asignar-lider', ['idImplementacion' => $idImplementacion, 'idSeccion' => $idSeccion]);
+        return Yii::$app->runAction('alumno-inscrito-lider/asignar-lider', ['idSeccion' => $idSeccion]);
     }
 
     //REPORTES
