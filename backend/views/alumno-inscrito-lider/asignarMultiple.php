@@ -119,7 +119,7 @@ Modal::end();
     </div>
 
     <?= Html::button('<i class="fa fa-chevron-circle-left"></i> Volver sin guardar', ['id' => 'botonVolverSinGuardar',
-        'value'=> Url::to(['/implementacion/panel-implementacion', 'idImplementacion' => Yii::$app->request->get('idImplementacion')]),
+        'value'=> Url::to(['/implementacion/panel-implementacion', 'idImplementacion' => $id_implementacion_activa ]),
         'class' =>'btn btn-danger']) ?>
 
     <?= Html::submitButton('<i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar Líderes y Volver', ['name'=>'guardarYSalir', 'value'=>'true','class' =>'btn btn-primary']) ?>

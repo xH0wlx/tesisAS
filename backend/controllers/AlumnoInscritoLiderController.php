@@ -83,13 +83,14 @@ class AlumnoInscritoLiderController extends Controller
 
             return $this->redirect(['/implementacion/panel-implementacion', 'idImplementacion' => $seccionSeleccionada->implementacion_id_implementacion ]);
         } else {
-            $implementacion = new Implementacion();
-            $dataSelect2 = $implementacion->getSociosParticipantesImplementacion(Yii::$app->request->get('idImplementacion'));
+            //$implementacion = new Implementacion();
+            //$dataSelect2 = $implementacion->getSociosParticipantesImplementacion(Yii::$app->request->get('idImplementacion'));
 
             return $this->render('asignarMultiple', [
                 'gruposTrabajo' => $gruposTrabajo,
                 'modelosLideres' => $gruposTrabajo,
-                'dataSelect2' => $dataSelect2,
+                'id_implementacion_activa' => $seccionSeleccionada->implementacion_id_implementacion,
+                //'dataSelect2' => $dataSelect2,
             ]);
         }//FIN ELSE (GET)
     }
