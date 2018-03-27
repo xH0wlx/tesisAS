@@ -90,7 +90,7 @@ Modal::end();
                                             echo "<td rowspan='".count($alumnosGrupo)."'>";
 
 
-                                            echo "<div class='vista-parcial'>";
+                                            echo "<div id='vista-parcial-grupo-".$grupoTrabajo->id_grupo_trabajo."'>";
                                             echo $this->render('_modificarAsignaciones', [
                                                 'grupoTrabajo' => $grupoTrabajo,
                                             ]);

@@ -40,9 +40,12 @@ $("#reemplazar-form").on(\'beforeSubmit\', function (e) {
         .done(function(data) {
             if(data.success) {
                 // data is saved
-                alert("Datos guardados exitosamente.");
+                alert("Datos eliminados exitosamente.");
                 $("#modalSCB").modal(\'hide\');
-                location.reload();
+                $.get(data.urlRefresh, data.id_grupo_trabajo,function(vista) {
+                    $("#vista-parcial-grupo-"+data.id_grupo_trabajo).html(vista);
+                    reloadEventsButtonsPartialView();
+                });
             } else if (data.validation) {
                 // server validation failed
                 $yiiform.yiiActiveForm(\'updateMessages\', data.validation, true); // renders validation messages at appropriate places

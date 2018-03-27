@@ -12,6 +12,7 @@ use Yii;
 use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
@@ -140,7 +141,8 @@ class AlumnoInscritoLiderController extends Controller
                     ){
                         $modeloAsignacion->observacion="Agregado";
                         if($modeloAsignacion->save()){
-                            return $this->asJson(['success' => true]);
+                            return $this->asJson( ['success' => true, 'id_grupo_trabajo' => $grupoTrabajo->id_grupo_trabajo,
+                                'urlRefresh' => Url::to(['/alumno-inscrito-lider/ver-vista-parcial-socios', 'idGrupoTrabajo' => $grupoTrabajo->id_grupo_trabajo]) ]);
                         }else{
                             return $this->asJson(['error' => true, 'message' => "Socio no guardado."]);
                         }
@@ -191,7 +193,8 @@ class AlumnoInscritoLiderController extends Controller
                         ])->exists()
                         ){
                             if($modeloAsignacionReemplazo->save() && $modeloAsignacionReemplazoVacio->save()){
-                                return $this->asJson(['success' => true]);
+                                return $this->asJson( ['success' => true, 'id_grupo_trabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo,
+                                    'urlRefresh' => Url::to(['/alumno-inscrito-lider/ver-vista-parcial-socios', 'idGrupoTrabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo]) ]);
                             }
                         }
 
@@ -232,7 +235,8 @@ class AlumnoInscritoLiderController extends Controller
                     $modeloAsignacionReemplazoVacio->cambio = $modeloAsignacionReemplazo->cambio;
 
                     if($modeloAsignacionReemplazo->save() && $modeloAsignacionReemplazoVacio->save()){
-                        return $this->asJson(['success' => true]);
+                        return $this->asJson( ['success' => true, 'id_grupo_trabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo,
+                            'urlRefresh' => Url::to(['/alumno-inscrito-lider/ver-vista-parcial-socios', 'idGrupoTrabajo' => $modeloAsignacionReemplazoVacio->grupo_trabajo_id_grupo_trabajo]) ]);
                     }
                 }
 
@@ -258,6 +262,18 @@ class AlumnoInscritoLiderController extends Controller
 
             return $this->renderAjax('modal/historialSCB', [
                 'asignacionesActivas' => $historialDeAsignaciones,
+            ]);
+        }
+        return false;
+    }
+
+    public function actionVerVistaParcialSocios($idGrupoTrabajo){
+        $grupoTrabajo = GrupoTrabajo::findOne($idGrupoTrabajo);
+        if( $grupoTrabajo == null ){ die("ID del grupo de trabajo no existe."); }
+        $request = Yii::$app->request;
+        if($request->isAjax && $request->isGet){
+            return $this->renderAjax('_modificarAsignaciones', [
+                'grupoTrabajo' => $grupoTrabajo,
             ]);
         }
         return false;
