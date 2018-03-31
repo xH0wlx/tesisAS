@@ -146,23 +146,22 @@ class ImplementacionSearch extends implementacion
     {
         $query = implementacion::find()
             ->select([
-                '{{implementacion}}.*', // select all customer fields
+                '{{implementacion}}.*',
                 'COUNT(DISTINCT {{implementacion}}.id_implementacion) AS cantidad_implementaciones',
                 'COUNT(DISTINCT {{seccion}}.docente_rut_docente) AS cantidad_docentes_reporte',
                 'COUNT(DISTINCT {{sci}}.id_sci) AS cantidad_sci_reporte',
                 'COUNT(DISTINCT {{grupo_trabajo_has_scb}}.scb_id_scb) AS cantidad_scb_reporte',
                 'COUNT(DISTINCT {{alumno_inscrito_seccion}}.id_alumno_inscrito_seccion) AS cantidad_alumnos_reporte',
-                '{{sede}}.id_sede AS id_sede_reporte_estadistica', // select all customer fields
-                '{{sede}}.nombre_sede AS sede_reporte_estadistica', // select all customer fields
+                '{{sede}}.id_sede AS id_sede_reporte_estadistica',
+                '{{sede}}.nombre_sede AS sede_reporte_estadistica',
             ])
             ->joinWith('asignaturaCodAsignatura.carreraCodCarrera.facultadIdFacultad.sedeIdSede') // ensure table junction
-            ->joinWith('seccions.grupoTrabajos.grupoTrabajoHasScbsNoCambiados') // ensure table junction
+            ->joinWith('seccions.grupoTrabajos.grupoTrabajoHasScbsNoCambiadosSinOrdenar') // ensure table junction
             ->joinWith('seccions.alumnoInscritoSeccions') // ensure table junction
             ->joinWith('match1Requerimientos.requerimientoIdRequerimiento.sciIdSci') // ensure table junction
             ->where(['{{implementacion}}.estado' => 2])
             ->groupBy(['{{sede}}.id_sede', '{{implementacion}}.anio_implementacion', '{{implementacion}}.semestre_implementacion']) // group the result to ensure aggregation function works
-            ->orderBy(['{{implementacion}}.anio_implementacion' => SORT_ASC,
-                '{{implementacion}}.semestre_implementacion'=> SORT_ASC]);
+            ->orderBy(['{{implementacion}}.anio_implementacion' => SORT_ASC, '{{implementacion}}.semestre_implementacion'=> SORT_ASC]);
 
 
         $dataProvider = new ActiveDataProvider([

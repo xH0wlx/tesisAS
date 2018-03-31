@@ -21,7 +21,7 @@ class CronController extends Controller{
         $this->stdout(PHP_EOL);
     }
 
-    public function actionEnviarNotificacionSocioBeneficiario($id){
+    /*public function actionEnviarNotificacionSocioBeneficiario($id){
         ini_set('max_execution_time', 0);
         //SE ENVÍA UN CORREO POR GRUPO Y AL SOCIO BENEFICIARIO
         $implementacion = Implementacion::findOne($id);
@@ -54,5 +54,5 @@ class CronController extends Controller{
             }
         }
         return true;
-    }
+    }*/
 }

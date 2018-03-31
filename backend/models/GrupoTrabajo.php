@@ -127,7 +127,13 @@ class GrupoTrabajo extends \yii\db\ActiveRecord
     public function getGrupoTrabajoHasScbsNoCambiados()
     {
         return $this->hasMany(GrupoTrabajoHasScb::className(), ['grupo_trabajo_id_grupo_trabajo' => 'id_grupo_trabajo'])
-            ->andOnCondition(['cambio' => '0'])->orderBy(['creado_en' => SORT_DESC]);
+            ->andOnCondition(['cambio' => GrupoTrabajoHasScb::ESTADO_ACTIVO])->orderBy(['creado_en' => SORT_DESC]);
+    }
+
+    public function getGrupoTrabajoHasScbsNoCambiadosSinOrdenar()
+    {
+        return $this->hasMany(GrupoTrabajoHasScb::className(), ['grupo_trabajo_id_grupo_trabajo' => 'id_grupo_trabajo'])
+            ->andOnCondition(['cambio' => GrupoTrabajoHasScb::ESTADO_ACTIVO]);
     }
 
     public function getUltimoSocioBeneficiario()
