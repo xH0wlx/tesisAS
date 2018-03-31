@@ -295,7 +295,7 @@
             },
             "type": "bower-asset-library",
             "extra": {
-                "bower-asset-main": "dist/jquery.js",
+                "bower-asset-main": "dist/jqueryXXX.js",
                 "bower-asset-ignore": [
                     "package.json"
                 ]
@@ -345,7 +345,7 @@
                     "./dist/inputmask/phone-codes/phone-ru.js",
                     "./dist/inputmask/phone-codes/phone-uk.js",
                     "./dist/inputmask/dependencyLibs/inputmask.dependencyLib.jqlite.js",
-                    "./dist/inputmask/dependencyLibs/inputmask.dependencyLib.jquery.js",
+                    "./dist/inputmask/dependencyLibs/inputmask.dependencyLib.jqueryXXX.js",
                     "./dist/inputmask/dependencyLibs/inputmask.dependencyLib.js",
                     "./dist/inputmask/bindings/inputmask.binding.js"
                 ],

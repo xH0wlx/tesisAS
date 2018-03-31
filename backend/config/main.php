@@ -97,7 +97,7 @@ return [
             'class' => 'backend\components\Correos',
         ],
         'assetManager' => [
-            'bundles' => [
+/*            'bundles' => [
                 'yii\web\JqueryAsset' => [
                     'sourcePath' => null,
                     'basePath' => '@webroot',
@@ -106,7 +106,7 @@ return [
                         'js/jquery.js',
                     ]
                 ],
-            ],
+            ],*/
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
