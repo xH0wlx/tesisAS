@@ -23,7 +23,7 @@ use yii\helpers\ArrayHelper;
  * @property AlumnoInscritoAsistente[] $alumnoInscritoAsistentes
  * @property AlumnoInscritoSeccion[] $alumnoInscritoSeccionIdAlumnoInscritoSeccions
  * @property GrupoTrabajo $grupoTrabajoIdGrupoTrabajo
- * @property Evidencia[] $evidencias
+ * @property Evidencia $evidencia
  */
 class Bitacora extends \yii\db\ActiveRecord
 {
